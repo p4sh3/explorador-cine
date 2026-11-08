@@ -103,3 +103,9 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 
 - Probar persistencia en navegador y sincronización entre pestañas con datos reales.
 - Decidir si filtros por género deben aplicarse globalmente a todos los resultados en vez de solo a la página cargada.
+
+## Ajuste: navegación instantánea en búsqueda
+
+- Se movió la lectura de `searchParams` a un componente asíncrono hijo dentro de `<Suspense>`.
+- El encabezado estático de `/buscar` puede renderizar inmediatamente; el fallback muestra skeletons mientras Next.js resuelve los parámetros URL.
+- Se eligió esta solución en lugar de `instant = false` para mantener navegación progresiva.

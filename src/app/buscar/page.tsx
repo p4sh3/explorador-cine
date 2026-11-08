@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { ContentSkeleton } from "@/components/catalog/content-skeleton";
 import { SearchExperience } from "@/components/catalog/search-experience";
 
 export const metadata: Metadata = {
@@ -13,11 +15,7 @@ type SearchPageProps = {
   }>;
 };
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const params = await searchParams;
-  const query = typeof params.q === "string" ? params.q.trim() : "";
-  const type = params.tipo === "series" ? "tv" : "movie";
-
+export default function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-14 sm:px-10 sm:py-20 lg:px-12">
       <p className="text-xs font-semibold uppercase tracking-[0.25em] text-amber-400">
@@ -30,7 +28,23 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         Busca por nombre y elige si quieres explorar películas o series.
       </p>
 
-      <SearchExperience initialQuery={query} initialType={type} />
+      <Suspense
+        fallback={
+          <div className="mt-10">
+            <ContentSkeleton />
+          </div>
+        }
+      >
+        <SearchResults searchParams={searchParams} />
+      </Suspense>
     </main>
   );
+}
+
+async function SearchResults({ searchParams }: SearchPageProps) {
+  const params = await searchParams;
+  const query = typeof params.q === "string" ? params.q.trim() : "";
+  const type = params.tipo === "series" ? "tv" : "movie";
+
+  return <SearchExperience initialQuery={query} initialType={type} />;
 }
