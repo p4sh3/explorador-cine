@@ -42,9 +42,13 @@ async function getJson<T>(
   return body as T;
 }
 
-export function fetchTrending(mediaType: MediaType, signal?: AbortSignal) {
+export function fetchTrending(
+  mediaType: MediaType,
+  page = 1,
+  signal?: AbortSignal,
+) {
   return getJson<TmdbPage>(
-    `/api/tmdb/trending?type=${mediaType}`,
+    `/api/tmdb/trending?type=${mediaType}&page=${page}`,
     signal,
   );
 }
@@ -52,10 +56,11 @@ export function fetchTrending(mediaType: MediaType, signal?: AbortSignal) {
 export function fetchSearch(
   mediaType: MediaType,
   query: string,
+  page = 1,
   signal?: AbortSignal,
 ) {
   return getJson<TmdbPage>(
-    `/api/tmdb/search?type=${mediaType}&query=${encodeURIComponent(query)}`,
+    `/api/tmdb/search?type=${mediaType}&query=${encodeURIComponent(query)}&page=${page}`,
     signal,
   );
 }
@@ -81,11 +86,12 @@ export function fetchDetails(
 export function fetchContentList(
   mediaType: MediaType,
   query: string,
+  page = 1,
   signal?: AbortSignal,
 ): Promise<TmdbPage> {
   return query
-    ? fetchSearch(mediaType, query, signal)
-    : fetchTrending(mediaType, signal);
+    ? fetchSearch(mediaType, query, page, signal)
+    : fetchTrending(mediaType, page, signal);
 }
 
 export type { TmdbContent };

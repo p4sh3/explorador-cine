@@ -9,8 +9,17 @@ export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const mediaType = parseMediaType(params.get("type"));
   const query = params.get("query")?.trim() ?? "";
+  const rawPage = params.get("page") ?? "1";
+  const page = Number(rawPage);
 
   if (!mediaType) return invalidMediaTypeResponse();
+
+  if (!/^[1-9]\d*$/.test(rawPage) || !Number.isSafeInteger(page) || page > 500) {
+    return Response.json(
+      { error: "La página debe ser un número entre 1 y 500." },
+      { status: 400 },
+    );
+  }
 
   if (query.length < 2 || query.length > 100) {
     return Response.json(
@@ -20,7 +29,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    return Response.json(await searchContent(mediaType, query));
+    return Response.json(await searchContent(mediaType, query, page));
   } catch (error) {
     return tmdbErrorResponse(error);
   }

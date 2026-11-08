@@ -5,6 +5,7 @@ import type { FormEvent } from "react";
 import { CatalogError } from "@/components/catalog/catalog-error";
 import { ContentGrid } from "@/components/catalog/content-grid";
 import { ContentSkeleton } from "@/components/catalog/content-skeleton";
+import { Pagination } from "@/components/catalog/pagination";
 import {
   fetchContentList,
   fetchGenres,
@@ -24,10 +25,13 @@ export function SearchExperience({
   const [submittedQuery, setSubmittedQuery] = useState(initialQuery);
   const [mediaType, setMediaType] = useState(initialType);
   const [selectedGenre, setSelectedGenre] = useState("");
+  const [page, setPage] = useState(1);
   const [attempt, setAttempt] = useState(0);
   const [formError, setFormError] = useState<string | null>(null);
   const [resource, setResource] = useState<{
     key: string;
+    page: number;
+    totalPages: number;
     items: TmdbContent[];
     error: string | null;
   } | null>(null);
@@ -36,7 +40,7 @@ export function SearchExperience({
     genres: TmdbGenre[];
     error: string | null;
   } | null>(null);
-  const requestKey = `${mediaType}:${submittedQuery}:${attempt}`;
+  const requestKey = `${mediaType}:${submittedQuery}:${page}:${attempt}`;
   const loading = resource?.key !== requestKey;
   const error =
     formError ??
@@ -51,21 +55,29 @@ export function SearchExperience({
   useEffect(() => {
     const controller = new AbortController();
 
-    fetchContentList(mediaType, submittedQuery, controller.signal)
+    fetchContentList(mediaType, submittedQuery, page, controller.signal)
       .then((page) =>
-        setResource({ key: requestKey, items: page.results, error: null }),
+        setResource({
+          key: requestKey,
+          page: page.page,
+          totalPages: page.totalPages,
+          items: page.results,
+          error: null,
+        }),
       )
       .catch((cause: unknown) => {
         if (cause instanceof DOMException && cause.name === "AbortError") return;
         setResource({
           key: requestKey,
+          page,
+          totalPages: 1,
           items: [],
           error: cause instanceof Error ? cause.message : "Error desconocido.",
         });
       });
 
     return () => controller.abort();
-  }, [mediaType, submittedQuery, attempt, requestKey]);
+  }, [mediaType, submittedQuery, page, attempt, requestKey]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -109,6 +121,7 @@ export function SearchExperience({
     }
 
     setFormError(null);
+    setPage(1);
     setSubmittedQuery(normalizedQuery);
   }
 
@@ -139,6 +152,7 @@ export function SearchExperience({
           onChange={(event) => {
             setMediaType(event.target.value as MediaType);
             setSelectedGenre("");
+            setPage(1);
           }}
           value={mediaType}
           id="type"
@@ -195,7 +209,16 @@ export function SearchExperience({
         ) : error ? (
           <CatalogError message={error} onRetry={retry} />
         ) : (
-          <ContentGrid items={visibleItems} />
+          <>
+            <ContentGrid items={visibleItems} />
+            {resource?.key === requestKey && (
+              <Pagination
+                onPageChange={setPage}
+                page={resource.page}
+                totalPages={resource.totalPages}
+              />
+            )}
+          </>
         )}
       </section>
     </>

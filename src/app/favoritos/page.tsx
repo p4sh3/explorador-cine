@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FavoritesList } from "@/components/favorites/favorites-list";
 
 export const metadata: Metadata = {
   title: "Favoritos | Explorador de Cine",
@@ -14,14 +15,8 @@ export default function FavoritesPage() {
       <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
         Favoritos
       </h1>
-      <section className="mt-8 rounded-2xl border border-dashed border-white/15 px-6 py-12 text-center">
-        <h2 className="text-lg font-medium text-white">
-          Tus favoritos aparecerán aquí
-        </h2>
-        <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-zinc-400">
-          En una próxima etapa podrás guardar películas y series para volver a
-          encontrarlas fácilmente.
-        </p>
+      <section className="mt-8">
+        <FavoritesList />
       </section>
     </main>
   );

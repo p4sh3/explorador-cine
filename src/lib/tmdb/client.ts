@@ -155,7 +155,7 @@ function parsePage(value: unknown, mediaType: MediaType): TmdbPage {
 
   return {
     page: readNumber(value.page) ?? 1,
-    totalPages: readNumber(value.total_pages) ?? 1,
+    totalPages: Math.min(500, readNumber(value.total_pages) ?? 1),
     results: value.results.flatMap((item) => {
       const content = parseContent(item, mediaType);
       return content ? [content] : [];
@@ -165,9 +165,11 @@ function parsePage(value: unknown, mediaType: MediaType): TmdbPage {
 
 export async function getTrending(
   mediaType: MediaType,
+  page: number,
 ): Promise<TmdbPage> {
   const data = await request(`/trending/${mediaType}/week`, new URLSearchParams({
     language: "es-MX",
+    page: String(page),
   }));
   return parsePage(data, mediaType);
 }
@@ -175,11 +177,13 @@ export async function getTrending(
 export async function searchContent(
   mediaType: MediaType,
   query: string,
+  page: number,
 ): Promise<TmdbPage> {
   const data = await request(`/search/${mediaType}`, new URLSearchParams({
     language: "es-MX",
     query,
     include_adult: "false",
+    page: String(page),
   }));
   return parsePage(data, mediaType);
 }

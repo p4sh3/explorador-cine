@@ -79,3 +79,27 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 - Configurar localmente el token de TMDB y probar respuestas reales, incluyendo límites y errores de credenciales.
 - Añadir paginación y revisar la relevancia de los resultados de búsqueda.
 - Implementar favoritos persistentes y acciones para agregarlos/quitarlos desde las tarjetas y el detalle.
+
+## Etapa 4: paginación y favoritos persistentes
+
+### Iteraciones y decisiones
+
+- Se añadieron controles de página anterior/siguiente a tendencias y búsqueda, usando el número de página y el total devueltos por TMDB.
+- Los Route Handlers validan páginas de 1 a 500; el cliente de TMDB solicita la página seleccionada.
+- Se implementó un almacén compartido con `useSyncExternalStore` y `localStorage`, con validación de datos, sincronización entre pestañas y mensajes visibles ante errores de lectura/escritura.
+- Las tarjetas y páginas de detalle permiten agregar o quitar favoritos; `/favoritos` muestra la colección y permite quitar elementos desde sus tarjetas.
+- No se modificó README.
+
+### Verificación
+
+- `pnpm lint`: correcto.
+- `pnpm typecheck`: correcto.
+- `pnpm build`: correcto.
+- `git diff --check`: correcto.
+- Pruebas HTTP: portada, búsqueda y favoritos respondieron 200; páginas fuera de 1–500 devolvieron 400.
+- Prueba en navegador contra TMDB: la paginación cambió de página 1 a 2; un favorito se guardó, permaneció tras recargar, se quitó y siguió ausente después de otra recarga.
+
+### Mejoras futuras
+
+- Probar persistencia en navegador y sincronización entre pestañas con datos reales.
+- Decidir si filtros por género deben aplicarse globalmente a todos los resultados en vez de solo a la página cargada.

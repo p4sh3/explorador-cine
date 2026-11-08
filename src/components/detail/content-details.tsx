@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { CatalogError } from "@/components/catalog/catalog-error";
+import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { fetchDetails } from "@/lib/tmdb/browser-client";
 import type { MediaType, TmdbDetails } from "@/lib/tmdb/types";
 
@@ -112,6 +113,9 @@ export function ContentDetails({ id, mediaType }: ContentDetailsProps) {
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-5xl">
             {details.title}
           </h1>
+          <div className="mt-4">
+            <FavoriteButton content={details} />
+          </div>
           <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm text-zinc-400">
             {details.releaseDate && (
               <span>{details.releaseDate.slice(0, 4)}</span>

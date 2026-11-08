@@ -4,18 +4,22 @@ import { useCallback, useEffect, useState } from "react";
 import { ContentGrid } from "@/components/catalog/content-grid";
 import { CatalogError } from "@/components/catalog/catalog-error";
 import { ContentSkeleton } from "@/components/catalog/content-skeleton";
+import { Pagination } from "@/components/catalog/pagination";
 import { fetchTrending } from "@/lib/tmdb/browser-client";
 import type { MediaType, TmdbContent } from "@/lib/tmdb/types";
 
 export function TrendingSection() {
   const [mediaType, setMediaType] = useState<MediaType>("movie");
+  const [page, setPage] = useState(1);
   const [attempt, setAttempt] = useState(0);
   const [resource, setResource] = useState<{
     key: string;
+    page: number;
+    totalPages: number;
     items: TmdbContent[];
     error: string | null;
   } | null>(null);
-  const requestKey = `${mediaType}:${attempt}`;
+  const requestKey = `${mediaType}:${page}:${attempt}`;
   const loading = resource?.key !== requestKey;
 
   const retry = useCallback(() => setAttempt((current) => current + 1), []);
@@ -23,21 +27,29 @@ export function TrendingSection() {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetchTrending(mediaType, controller.signal)
+    fetchTrending(mediaType, page, controller.signal)
       .then((page) =>
-        setResource({ key: requestKey, items: page.results, error: null }),
+        setResource({
+          key: requestKey,
+          page: page.page,
+          totalPages: page.totalPages,
+          items: page.results,
+          error: null,
+        }),
       )
       .catch((cause: unknown) => {
         if (cause instanceof DOMException && cause.name === "AbortError") return;
         setResource({
           key: requestKey,
+          page,
+          totalPages: 1,
           items: [],
           error: cause instanceof Error ? cause.message : "Error desconocido.",
         });
       });
 
     return () => controller.abort();
-  }, [mediaType, attempt, requestKey]);
+  }, [mediaType, page, attempt, requestKey]);
 
   return (
     <section aria-labelledby="trending-heading">
@@ -67,7 +79,10 @@ export function TrendingSection() {
                   : "text-zinc-400 hover:text-white"
               }`}
               key={type}
-              onClick={() => setMediaType(type)}
+              onClick={() => {
+                setMediaType(type);
+                setPage(1);
+              }}
               type="button"
             >
               {type === "movie" ? "Películas" : "Series"}
@@ -80,7 +95,16 @@ export function TrendingSection() {
       ) : resource?.error ? (
         <CatalogError message={resource.error} onRetry={retry} />
       ) : (
-        <ContentGrid items={resource?.items ?? []} />
+        <>
+          <ContentGrid items={resource?.items ?? []} />
+          {resource && (
+            <Pagination
+              onPageChange={setPage}
+              page={resource.page}
+              totalPages={resource.totalPages}
+            />
+          )}
+        </>
       )}
     </section>
   );

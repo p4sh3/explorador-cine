@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FavoriteButton } from "@/components/favorites/favorite-button";
 import type { TmdbContent } from "@/lib/tmdb/types";
 
 type ContentCardProps = {
@@ -51,6 +52,7 @@ export function ContentCard({ content }: ContentCardProps) {
             </span>
           )}
         </p>
+        <FavoriteButton content={content} />
       </div>
     </article>
   );
