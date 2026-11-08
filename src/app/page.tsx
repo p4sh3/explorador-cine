@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TrendingSection } from "@/components/catalog/trending-section";
 
 const contentTypes = [
   {
@@ -52,9 +53,13 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-7xl px-6 py-16 sm:px-10 sm:py-20 lg:px-12">
+        <TrendingSection />
+      </section>
+
       <section
         aria-labelledby="explora-heading"
-        className="mx-auto max-w-7xl px-6 py-16 sm:px-10 sm:py-20 lg:px-12"
+        className="mx-auto w-full max-w-7xl px-6 pb-16 sm:px-10 sm:pb-20 lg:px-12"
       >
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>

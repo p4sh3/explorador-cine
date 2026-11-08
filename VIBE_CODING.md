@@ -4,10 +4,6 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 
 ## Etapa 1: configuración y creación del proyecto
 
-### Prompt principal
-
-> Procedamos a desarrollar el proyecto por etapas. Completa una etapa y analicemos los futuros puntos de mejora para tomarlos en cuenta en el futuro si así es necesario. Empecemos con la configuración y creación del proyecto para poder ir subiendo manualmente los cambios a un repositorio remoto y no perder progreso.
-
 ### Iteraciones y decisiones
 
 - Se revisaron los requisitos técnicos del proyecto y se creó el proyecto aislado en `explorador-cine`.
@@ -33,10 +29,6 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 
 ## Etapa 2: estructura de navegación y rutas
 
-### Prompt principal
-
-> Bien, procedamos a la siguiente etapa.
-
 ### Iteraciones y decisiones
 
 - Se reemplazó la portada provisional con una portada de exploración y enlaces a búsqueda de películas y series.
@@ -58,3 +50,32 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 - Integrar TMDB desde el servidor y alimentar portada, búsqueda y páginas de detalle.
 - Añadir filtros de género y estados de carga/error específicos al consultar la API.
 - Implementar favoritos persistentes en el navegador y conectar los controles con resultados reales.
+
+## Etapa 3: integración de TMDB
+
+### Iteraciones y decisiones
+
+- Se creó un cliente TMDB exclusivo del servidor (`server-only`), con tipos de dominio, mapeo defensivo de respuestas y errores explícitos para configuración faltante, fallas de red, credenciales rechazadas y respuestas inválidas.
+- Se añadieron Route Handlers para tendencias, búsqueda, géneros y detalles. Validan tipo, longitud de consulta e identificador, y nunca exponen el token.
+- La portada ahora carga tendencias de películas o series; la búsqueda permite buscar, cambiar tipo y filtrar por género; las páginas de detalle muestran póster, sinopsis, géneros y metadatos cuando la API está disponible.
+- Los componentes interactivos usan `useState` y `useEffect`, cancelan peticiones obsoletas, y muestran skeletons, errores recuperables y resultados vacíos.
+- Se configuró `next/image` para imágenes alojadas en `image.tmdb.org`.
+- `.env.example` documenta el token de lectura necesario; `.env.local` no existe en el entorno y no se añadió ninguna credencial. README no se modificó.
+
+### Desafíos y resolución
+
+- ESLint prohíbe actualizaciones sincrónicas de estado al ejecutar un efecto. El estado de carga se deriva ahora de la correspondencia entre la clave de la petición y la respuesta, evitando renders en cascada y resultados obsoletos.
+- No se pudo comprobar una respuesta real de TMDB porque falta `TMDB_API_READ_ACCESS_TOKEN`. Los endpoints responden con un mensaje claro y código 503 en ese caso.
+
+### Verificación
+
+- `pnpm lint`: correcto.
+- `pnpm typecheck`: correcto.
+- `pnpm build`: correcto; se generaron las cuatro rutas API.
+- Pruebas HTTP: parámetros inválidos devuelven 400, configuración faltante devuelve 503 y las rutas de página devuelven 200.
+
+### Mejoras futuras
+
+- Configurar localmente el token de TMDB y probar respuestas reales, incluyendo límites y errores de credenciales.
+- Añadir paginación y revisar la relevancia de los resultados de búsqueda.
+- Implementar favoritos persistentes y acciones para agregarlos/quitarlos desde las tarjetas y el detalle.
