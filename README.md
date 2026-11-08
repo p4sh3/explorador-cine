@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Explorador de Cine
 
-## Getting Started
+Aplicación web para descubrir películas y series, consultar sus detalles y guardar favoritos. El proyecto se desarrolla por etapas con Next.js App Router, TypeScript y Tailwind CSS.
 
-First, run the development server:
+## Requisitos
+
+- Node.js 20.9 o superior.
+- pnpm 12.
+- Una cuenta de [TMDB](https://www.themoviedb.org/) para obtener una API key cuando se implemente la integración de datos.
+
+## Instalación
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Las variables de TMDB se incorporarán en una etapa posterior. Hasta entonces, no hace falta completar `.env.local`. No compartas ni subas ese archivo; `.env.local` está excluido de Git.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Comandos
 
-## Learn More
+```bash
+pnpm dev        # servidor de desarrollo
+pnpm lint       # ESLint
+pnpm typecheck  # comprobación de TypeScript
+pnpm build      # compilación de producción
+pnpm start      # servidor de producción local
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Estructura inicial
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `src/app/`: rutas y layout de Next.js App Router.
+- `public/`: recursos estáticos.
+- `.env.example`: inventario de variables de entorno necesarias.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Control de versiones
 
-## Deploy on Vercel
+El proyecto tiene un repositorio Git local. Para vincularlo con un repositorio remoto creado manualmente:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git remote add origin <URL_DEL_REPOSITORIO>
+git push -u origin main
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Los cambios se pueden guardar en checkpoints descriptivos antes de subirlos:
+
+```bash
+git add .
+git commit -m "descripción breve del cambio"
+git push
+```
+
+## Despliegue
+
+URL de producción: **pendiente**. En la etapa de despliegue se configurará el proyecto en Vercel u otra plataforma y se añadirá aquí la URL pública.
+
+## Progreso
+
+El alcance de cada etapa, las decisiones técnicas y los desafíos se registran en [VIBE_CODING.md](./VIBE_CODING.md).
