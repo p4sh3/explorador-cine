@@ -12,6 +12,20 @@ Aplicación web para descubrir películas y series, consultar sus detalles y gua
 - Mostrar estados de carga, error con opción de reintento, resultados vacíos y página 404.
 - Diseño adaptable a móviles y escritorio.
 
+## Despliegue público
+
+La aplicación está desplegada en una instancia EC2 y se puede visitar en:
+
+[http://ec2-34-234-208-181.compute-1.amazonaws.com/](http://ec2-34-234-208-181.compute-1.amazonaws.com/)
+
+La siguiente captura muestra la instancia EC2 utilizada para el despliegue:
+
+![Consola de AWS EC2 con la instancia de Explorador de Cine en ejecución](./evidence/image.jpg)
+
+La aplicación desplegada en la página de tendencias:
+
+![Página de tendencias de Explorador de Cine desplegada en EC2](./evidence/Screenshot%20from%202026-11-08%2022-00-55.png)
+
 ## Requisitos
 
 - Node.js compatible con Next.js 16.
