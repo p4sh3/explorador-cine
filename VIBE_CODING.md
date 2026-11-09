@@ -10,13 +10,9 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 - Se utilizó `create-next-app` con Next.js 16, App Router, TypeScript, Tailwind CSS y ESLint.
 - Se eligió pnpm porque está disponible en el entorno; npm no está instalado.
 - Se conserva el repositorio Git local generado por el scaffolder. Se confirmó un remoto `origin` ya configurado; no se realizó ningún push.
-- Se agregó `.env.example` con los nombres de variables previstos para TMDB. La integración real se realizará en una etapa posterior.
+- Se agregó `.env.example` con los nombres de variables previstos para TMDB; la integración se completó en la etapa 3.
 - Se dejó una portada provisional para identificar el proyecto sin adelantar la funcionalidad del MVP.
 
-### Desafíos y resolución
-
-- El entorno no dispone del comando `npm`; se usó pnpm para generar, instalar y ejecutar el proyecto.
-- La URL de producción todavía no existe; queda pendiente para la etapa de despliegue. El usuario debe revisar y decidir cuándo publicar el remoto configurado.
 
 ### Verificación
 
@@ -24,8 +20,9 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 - `pnpm typecheck`: correcto.
 - `pnpm build`: correcto; la ruta inicial se genera estáticamente.
 
-### Mejoras futuras
-- Integrar TMDB en el servidor y definir cómo validar la configuración de entorno.
+### Continuidad
+
+- La integración de TMDB se completó en la etapa 3; la configuración sensible se mantiene fuera del repositorio.
 
 ## Etapa 2: estructura de navegación y rutas
 
@@ -36,7 +33,7 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 - La búsqueda acepta `q` y `tipo` como parámetros de URL y usa un formulario GET sin JavaScript. Los resultados se mantienen explícitamente como pendiente de integración con TMDB; no se muestran datos ficticios.
 - Se añadieron estados globales de carga, error con opción de reintento y página 404.
 - Las páginas de rutas utilizan Server Components; el límite de error usa Client Component porque Next.js requiere interacción para `reset`.
-- Se mantuvo README sin modificar; su documentación completa se deja para la etapa final.
+- Se pospuso la documentación final del README hasta el cierre del proyecto.
 
 ### Verificación
 
@@ -45,11 +42,10 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 - `pnpm build`: correcto; se generaron las rutas de portada, búsqueda, favoritos, película y serie.
 - Pruebas HTTP contra el servidor de producción del proyecto: portada, búsqueda, búsqueda con parámetros, favoritos y ambos detalles devolvieron 200; la ruta inexistente devolvió 404.
 
-### Mejoras futuras
+### Continuidad
 
-- Integrar TMDB desde el servidor y alimentar portada, búsqueda y páginas de detalle.
-- Añadir filtros de género y estados de carga/error específicos al consultar la API.
-- Implementar favoritos persistentes en el navegador y conectar los controles con resultados reales.
+- La integración de TMDB, los filtros de género y los estados de carga/error se desarrollaron en la etapa 3.
+- La persistencia de favoritos y la paginación se completaron en la etapa 4.
 
 ## Etapa 3: integración de TMDB
 
@@ -64,7 +60,6 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 
 ### Desafíos y resolución
 
-- ESLint prohíbe actualizaciones sincrónicas de estado al ejecutar un efecto. El estado de carga se deriva ahora de la correspondencia entre la clave de la petición y la respuesta, evitando renders en cascada y resultados obsoletos.
 - No se pudo comprobar una respuesta real de TMDB porque falta `TMDB_API_READ_ACCESS_TOKEN`. Los endpoints responden con un mensaje claro y código 503 en ese caso.
 
 ### Verificación
@@ -74,11 +69,10 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 - `pnpm build`: correcto; se generaron las cuatro rutas API.
 - Pruebas HTTP: parámetros inválidos devuelven 400, configuración faltante devuelve 503 y las rutas de página devuelven 200.
 
-### Mejoras futuras
+### Continuidad
 
-- Configurar localmente el token de TMDB y probar respuestas reales, incluyendo límites y errores de credenciales.
-- Añadir paginación y revisar la relevancia de los resultados de búsqueda.
-- Implementar favoritos persistentes y acciones para agregarlos/quitarlos desde las tarjetas y el detalle.
+- La paginación y los favoritos persistentes se añadieron en la etapa 4.
+- Para ejecutar la aplicación con datos reales, cada entorno debe configurar su propio token TMDB en `.env.local`.
 
 ## Etapa 4: paginación y favoritos persistentes
 
@@ -99,13 +93,15 @@ Este documento registra las etapas de desarrollo, las decisiones tomadas con apo
 - Pruebas HTTP: portada, búsqueda y favoritos respondieron 200; páginas fuera de 1–500 devolvieron 400.
 - Prueba en navegador contra TMDB: la paginación cambió de página 1 a 2; un favorito se guardó, permaneció tras recargar, se quitó y siguió ausente después de otra recarga.
 
-### Mejoras futuras
-
-- Probar persistencia en navegador y sincronización entre pestañas con datos reales.
-- Decidir si filtros por género deben aplicarse globalmente a todos los resultados en vez de solo a la página cargada.
 
 ## Ajuste: navegación instantánea en búsqueda
 
 - Se movió la lectura de `searchParams` a un componente asíncrono hijo dentro de `<Suspense>`.
 - El encabezado estático de `/buscar` puede renderizar inmediatamente; el fallback muestra skeletons mientras Next.js resuelve los parámetros URL.
 - Se eligió esta solución en lugar de `instant = false` para mantener navegación progresiva.
+
+## Cierre y documentación
+
+- Se completó el README con las instrucciones de configuración local, variables de entorno, rutas, API interna, tecnologías, comandos y límites funcionales.
+- El proyecto satisface los requisitos técnicos del enunciado: Next.js 16 con App Router, TypeScript, Tailwind CSS, rutas de página y API, Server y Client Components, hooks de React, diseño responsive y estados de carga/error.
+- `TMDB_API_READ_ACCESS_TOKEN` debe configurarse localmente en `.env.local`; el secreto no se incluye en el repositorio ni se expone al navegador.
